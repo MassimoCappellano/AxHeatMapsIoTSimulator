@@ -3,7 +3,7 @@
 const fs = require('fs');
 const Promise = require("bluebird");
 
-function doSplitWork(data) {
+function doSplitData(data) {
     var results = [];
     var ligthsStr = data.split('|');
 
@@ -25,16 +25,25 @@ function doSplitWork(data) {
     return results;
 }
 
-function doParsing(geomapFilename) {
-    fs.readFile(geomapFilename, 'utf8', function (err, data) {
-        if (err) {
-          return console.log(err);
-        }
-        var lightsData = doSplitWork(data);
+function doLoadFile(geomapFilename) {
+    var promise = new Promise(function(resolve, reject){
 
-        console.log(lightsData);
-      });
+        fs.readFile(geomapFilename, 'utf8', function (err, data) {
+            if (err) {
+              return reject(err);
+            }
 
+            resolve(data);
+          });
+
+
+    });
+    
+
+      return promise;
     }
 
-module.exports = doParsing;
+module.exports = {
+    doLoadFile: doLoadFile,
+    doSplitData: doSplitData
+}
