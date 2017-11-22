@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "bluebird": "^3.5.1",
     "env2": "^2.2.0",
     "mqtt": "^2.14.0"
   }

@@ -3,6 +3,8 @@
 const mqtt = require('mqtt')
 const env = require('env2')('./.env');
 
+const doParser = require('./geomap_parser');
+
 // your app goes here
 console.log("HOST_MQTT_SERVER:", process.env.HOST_MQTT_SERVER); 
 console.log("QUEUE_NAME:", process.env.QUEUE_NAME); 
@@ -29,6 +31,8 @@ function doAction() {
 const intervalSeconds = 6;
 
 console.log("WAIT SENDING", intervalSeconds,"seconds");
+
+doParser("./out/Geomap.txt");
 
 setInterval(doAction,  intervalSeconds * 1000);
 
