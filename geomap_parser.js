@@ -8,7 +8,7 @@ function doSplitData(data) {
     var ligthsStr = data.split('|');
 
     ligthsStr.forEach(function(element) {
-        console.log(element);
+        // console.log(element);
 
         var valuesLight = element.split(';');
 
@@ -17,7 +17,7 @@ function doSplitData(data) {
 
             results.push({ id: valuesLight[0], lightName: valuesLight[1], 
                 macAddress: valuesLight[2], lat: valuesLight[3], 
-                lng: valuesLight[4], misc: valuesLight[5] });
+                lng: valuesLight[4], misc: valuesLight[5], dimmer: null });
 
         }
     }, this);
