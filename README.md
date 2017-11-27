@@ -33,6 +33,8 @@ Creare un file `.env` basandosi sul file `.env_template`
 
 | **PARAMETRO**      | **DESCRIZIONE**           | **DEFAULT**  |
 | ------------- |-------------| -----|
+| `HOST_MQTT_SERVER` | hostname o IP address server MQTT | `localhost`|
+| `QUEUE_NAME` | nome della coda su cui sono pubblicati i messaggi | nessun default - parametro obbligatorio |
 | `PATH_INPUT_GEOMAP`      | path file descrizione lights | `./out/Geomap.txt` |
 | `PATH_OUTPUT_DUMP_LIGHTS`      | path di output file daum valori lights      |   `./out/dump_lights.json` |
 |`INTERVAL_SENDING_MSG` | numero di sec di intervallo tra nuovi messaggi | 6 |

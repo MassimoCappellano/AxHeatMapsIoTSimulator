@@ -9,17 +9,13 @@ const geoMapParser = require('./geomap_parser');
 
 const DEFAULT_INTERVAL_SENDING_MSG = 6;
 
+if(!process.env.QUEUE_NAME) {
+    console.log("ERRORE CONFIGURAZIONE: manca valore parametro QUEUE_NAME nel file .env");
+    process.exit(1); 
+}
 // your app goes here
 console.log("HOST_MQTT_SERVER:", process.env.HOST_MQTT_SERVER); 
 console.log("QUEUE_NAME:", process.env.QUEUE_NAME); 
-
-/*
-
-export PATH_INPUT_GEOMAP = ./out/Geomap.txt
-export INTERVAL_SENDING_MSG = 6
-export INTERVAL_ON_SHUTDOWN = 30
-
-*/
 
 var pathInputGeomap = process.env.PATH_INPUT_GEOMAP || "./out/Geomap.txt";
 var pathOutputDumpLights = process.env.PATH_OUTPUT_DUMP_LIGHTS || "./out/dump_lights.json";
@@ -27,7 +23,7 @@ var pathOutputDumpLights = process.env.PATH_OUTPUT_DUMP_LIGHTS || "./out/dump_li
 var intervalSendingMsg = 
     process.env.INTERVAL_SENDING_MSG || DEFAULT_INTERVAL_SENDING_MSG;
 
-var hostMqttServer = process.env.HOST_MQTT_SERVER;
+var hostMqttServer = process.env.HOST_MQTT_SERVER  || 'localhost';
 var queueName = process.env.QUEUE_NAME;
 
 if((typeof intervalSendingMsg) === 'string' && isNaN(intervalSendingMsg = parseInt(intervalSendingMsg, 10))) {
