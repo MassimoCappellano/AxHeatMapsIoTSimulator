@@ -1,7 +1,7 @@
 # AxHeatMapsIoTSimulator
 Composta da due applicazioni:
-1. CREATE TOPOLOGY - crea un file topologia delle luci per dei test;
-1. TRAFFIC GENERATOR - in base a un file topologia delle luci, pubblica dati valore dimmer luci su coda MQTT;
+1. **CREATE TOPOLOGY** - crea un file topologia delle luci per dei test;
+1. **TRAFFIC GENERATOR** - in base a un file topologia delle luci, pubblica dati valore dimmer luci su coda MQTT;
 
 ## CREATE TOPOLOGY
 
@@ -26,7 +26,7 @@ Creare un file `.env` basandosi sul file `.env_template`
 
 ## TRAFFIC GENERATOR
 
-`node ./index.js`
+`node ./lightsDimmerGenerator.js`
 
 Legge il file Geomap e simula dei dati sul dimmer luci inviandoli su coda MQTT.  
 
