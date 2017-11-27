@@ -13,6 +13,7 @@ if(!process.env.QUEUE_NAME) {
     console.log("ERRORE CONFIGURAZIONE: manca valore parametro QUEUE_NAME nel file .env");
     process.exit(1); 
 }
+
 // your app goes here
 console.log("HOST_MQTT_SERVER:", process.env.HOST_MQTT_SERVER); 
 console.log("QUEUE_NAME:", process.env.QUEUE_NAME); 
