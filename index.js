@@ -7,19 +7,39 @@ const env = require('env2')('./.env');
 
 const geoMapParser = require('./geomap_parser');
 
+const DEFAULT_INTERVAL_SENDING_MSG = 6;
+
 // your app goes here
 console.log("HOST_MQTT_SERVER:", process.env.HOST_MQTT_SERVER); 
 console.log("QUEUE_NAME:", process.env.QUEUE_NAME); 
 
+/*
+
+export PATH_INPUT_GEOMAP = ./out/Geomap.txt
+export INTERVAL_SENDING_MSG = 6
+export INTERVAL_ON_SHUTDOWN = 30
+
+*/
+
+var pathInputGeomap = process.env.PATH_INPUT_GEOMAP || "./out/Geomap.txt";
+var pathOutputDumpLights = process.env.PATH_OUTPUT_DUMP_LIGHTS || "./out/dump_lights.json";
+
+var intervalSendingMsg = 
+    process.env.INTERVAL_SENDING_MSG || DEFAULT_INTERVAL_SENDING_MSG;
+
 var hostMqttServer = process.env.HOST_MQTT_SERVER;
 var queueName = process.env.QUEUE_NAME;
+
+if((typeof intervalSendingMsg) === 'string' && isNaN(intervalSendingMsg = parseInt(intervalSendingMsg, 10))) {
+    console.log("VALUE INTERVAL_SENDING_MSG non numero,  settato a default:",
+      DEFAULT_INTERVAL_SENDING_MSG);
+    intervalSendingMsg = DEFAULT_INTERVAL_SENDING_MSG;
+} 
 
 var client = mqtt.connect('mqtt://' + hostMqttServer);
 
 var doRun = true;
 var timerDoWork = null;
-const intervalSeconds = 6;
-const intervalOnShutdown = 30;
 
 // create a Mersenne Twister-19937 that is auto-seeded based on time and other random values
 var engine = Random.engines.mt19937().autoSeed();
@@ -65,22 +85,16 @@ const rl = readline.createInterface({
 });
 
 rl.on('SIGINT', () => {
-    rl.question('Are you sure you want to exit? ', (answer) => {
-      if (answer.match(/^y(es)?$/i)) {
-          doRun = false;
-          rl.pause();
+    
+    doRun = false;
+    rl.pause();
 
-          if(timerDoWork) {
-              console.log("STOPPING DO WORK!!! WAIT:", intervalOnShutdown, "secs");
-              setInterval(function() {
-                  console.log("NOW CALLING CLEAR INTERVAL!!!");
-                  clearInterval(timerDoWork);
-                  process.exit(0); 
-                }, intervalOnShutdown * 1000);
-          }
-      }
+    if(timerDoWork) {
+        console.log("STOPPING DO WORK!!!");
+        clearInterval(timerDoWork);
+        process.exit(0); 
+    }
 
-    });
   });
 
 function buildAction(arrLights) {
@@ -95,8 +109,6 @@ function buildAction(arrLights) {
 
         if(doRun) {
 
-            console.log("sending on queue");
-            
             var topologyLightsCopy = [];
 
             topologyLights.forEach(function(element) {
@@ -121,12 +133,12 @@ function buildAction(arrLights) {
             modifyDimmer(slicedTopologyLightsCopy);
 
             if(slicedTopologyLightsCopy.length != 0) {
-                console.log("SENDING NEW UPDATE MSG!!!");
+                console.log("---> SENDING NEW UPDATE MSG!!!");
                 var newMsg = createMsgDimmer(slicedTopologyLightsCopy);
                 msg = newMsg;
                 
                 // doing dump actual situations
-                var stream = fs.createWriteStream("./out/dump_lights.json");
+                var stream = fs.createWriteStream(pathOutputDumpLights);
                             
                 stream.once('open', function(fd) {
                     stream.write(JSON.stringify(topologyLights));
@@ -140,12 +152,11 @@ function buildAction(arrLights) {
             }
             
         } else {
-            console.log("STOPPING APPLICATION!!!");
 
             // sending the same message
-            console.log("RESENDING LAST MSG!!!");
+            // console.log("---> RESENDING LAST MSG!!!");
 
-            client.publish( queueName, msg);
+            // client.publish( queueName, msg);
         }
 
         
@@ -156,16 +167,16 @@ function buildAction(arrLights) {
 
 
 
-console.log("WAIT SENDING", intervalSeconds,"seconds");
+console.log("WAIT SENDING", intervalSendingMsg, "seconds");
 
-geoMapParser.doLoadFile("./out/Geomap.txt").then(function(result){
+geoMapParser.doLoadFile(pathInputGeomap).then(function(result){
     // console.log("result:", result);
     var arrLight = geoMapParser.doSplitData(result);
     // console.log(arrLight);
 
     var fDoAction = buildAction(arrLight);
     fDoAction();
-    timerDoWork = setInterval(fDoAction,  intervalSeconds * 1000);
+    timerDoWork = setInterval(fDoAction,  intervalSendingMsg * 1000);
 }, function(err) { 
     console.error('ERROR:', err);
 });

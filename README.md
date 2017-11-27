@@ -16,7 +16,7 @@ Creare un file `.env` basandosi sul file `.env_template`
 
 | **PARAMETRO**      | **DESCRIZIONE**           | **DEFAULT**  |
 | ------------- |-------------| -----|
-| `NUM_LIGHTS`      | numero di luci per cui viene generato il file Geomap. Valore massimo 150, | `100` |
+| `NUM_LIGHTS`      | numero di luci per cui viene generato il file Geomap. Valore massimo 150 | `100` |
 | `PATH_OUTPUT_GEOMAP`      | path di output file Geomap      |   `./out/Geomap_out.txt` |
 
 ## TRAFFIC GENERATOR
@@ -31,4 +31,8 @@ Sotto `./out/dump_lights.json` il dump della situazione lampade aggiornato in ba
 
 Creare un file `.env` basandosi sul file `.env_template`
 
-**TODO** DESCRIZIONE VARIABILI DI CONFIGURAZIONE e AGGIUNTA `INTERVAL_SENDING_MSG` e `INTERVAL_ON_SHUTDOWN`
+| **PARAMETRO**      | **DESCRIZIONE**           | **DEFAULT**  |
+| ------------- |-------------| -----|
+| `PATH_INPUT_GEOMAP`      | path file descrizione lights | `./out/Geomap.txt` |
+| `PATH_OUTPUT_DUMP_LIGHTS`      | path di output file daum valori lights      |   `./out/dump_lights.json` |
+|`INTERVAL_SENDING_MSG` | numero di sec di intervallo tra nuovi messaggi | 6 |
