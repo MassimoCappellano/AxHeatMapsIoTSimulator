@@ -100,6 +100,15 @@ function buildAction(arrLights) {
     var numCall = 0;
     var msg;
 
+    var lengthArray = topologyLights.length;
+    
+    // create a distribution that will consistently produce integers within inclusive range [0, 99].
+    var distribution = Random.integer(0, lengthArray -1);
+    // generate a number that is guaranteed to be within [0, 99] without any particular bias.
+    function generateNaturalLessThanX() {
+        return distribution(engine);
+    }
+
     function doAction() {
         
         numCall++;
@@ -111,15 +120,6 @@ function buildAction(arrLights) {
             topologyLights.forEach(function(element) {
                 topologyLightsCopy.push(element);
             }, this);
-    
-            var lengthArray = topologyLights.length;
-    
-            // create a distribution that will consistently produce integers within inclusive range [0, 99].
-            var distribution = Random.integer(0, lengthArray -1);
-            // generate a number that is guaranteed to be within [0, 99] without any particular bias.
-            function generateNaturalLessThanX() {
-                return distribution(engine);
-            }
     
             Random.shuffle(engine, topologyLightsCopy); 
     
