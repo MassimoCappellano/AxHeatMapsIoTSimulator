@@ -6,6 +6,7 @@ const Random = require('random-js');
 const env = require('env2')('./.env');
 
 const geoMapParser = require('./geomap_parser');
+const extraDataGenerator = require('./extra_data_generator');
 
 const DEFAULT_INTERVAL_SENDING_MSG = 6;
 
@@ -100,6 +101,8 @@ function buildAction(arrLights) {
     var numCall = 0;
     var msg;
 
+    var extraLights = extraDataGenerator.buildExtra(300, 500);
+
     var lengthArray = topologyLights.length;
     
     // create a distribution that will consistently produce integers within inclusive range [0, 99].
@@ -126,7 +129,15 @@ function buildAction(arrLights) {
             var slicedTopologyLightsCopy = topologyLightsCopy.slice(0, generateNaturalLessThanX());
     
             // console.log(slicedTopologyLightsCopy, slicedTopologyLightsCopy.length);
-    
+            
+            Random.shuffle(engine, extraLights);
+
+            extraLights.forEach(function(element) {
+                slicedTopologyLightsCopy.push(element);
+            });
+ 
+            Random.shuffle(engine, slicedTopologyLightsCopy); 
+
             modifyDimmer(slicedTopologyLightsCopy);
 
             if(slicedTopologyLightsCopy.length != 0) {
