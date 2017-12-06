@@ -6,6 +6,7 @@ const Random = require('random-js');
 const env = require('env2')('./.env');
 
 const geoMapParser = require('./geomap_parser');
+const extraDataGenerator = require('./extra_data_generator');
 
 const DEFAULT_INTERVAL_SENDING_MSG = 6;
 
@@ -15,7 +16,7 @@ if(!process.env.QUEUE_NAME) {
 }
 
 // your app goes here
-console.log("HOST_MQTT_SERVER:", process.env.HOST_MQTT_SERVER); 
+console.log("HOST_MQTT_SERVER:", process.env.HOST_MQTT_SERVER || 'localhost'); 
 console.log("QUEUE_NAME:", process.env.QUEUE_NAME); 
 
 var pathInputGeomap = process.env.PATH_INPUT_GEOMAP || "./out/Geomap.txt";
@@ -27,11 +28,21 @@ var intervalSendingMsg =
 var hostMqttServer = process.env.HOST_MQTT_SERVER  || 'localhost';
 var queueName = process.env.QUEUE_NAME;
 
+var doExtraLightsValue = process.env.DO_EXTRA_LIGHTS || 'ON';
+
 if((typeof intervalSendingMsg) === 'string' && isNaN(intervalSendingMsg = parseInt(intervalSendingMsg, 10))) {
     console.log("VALUE INTERVAL_SENDING_MSG non numero,  settato a default:",
       DEFAULT_INTERVAL_SENDING_MSG);
     intervalSendingMsg = DEFAULT_INTERVAL_SENDING_MSG;
 } 
+
+var doExtraLights = true;
+
+if(doExtraLightsValue == 'Off' || doExtraLightsValue == 'OFF'|| doExtraLightsValue == 'off') {
+    doExtraLights = false;
+} 
+
+console.log("VALUE DO_EXTRA_LIGHTS:", (doExtraLights? 'ON', 'OFF'));
 
 var client = mqtt.connect('mqtt://' + hostMqttServer);
 
@@ -94,11 +105,26 @@ rl.on('SIGINT', () => {
 
   });
 
-function buildAction(arrLights) {
+function buildAction(arrLights, doExtraLights) {
 
     var topologyLights = arrLights;
     var numCall = 0;
     var msg;
+
+    var extraLights = [];
+
+    if(doExtraLights) {
+        extraLights = extraDataGenerator.buildExtra(300, 500);
+    }
+    
+    var lengthArray = topologyLights.length;
+    
+    // create a distribution that will consistently produce integers within inclusive range [0, 99].
+    var distribution = Random.integer(0, lengthArray -1);
+    // generate a number that is guaranteed to be within [0, 99] without any particular bias.
+    function generateNaturalLessThanX() {
+        return distribution(engine);
+    }
 
     function doAction() {
         
@@ -112,21 +138,20 @@ function buildAction(arrLights) {
                 topologyLightsCopy.push(element);
             }, this);
     
-            var lengthArray = topologyLights.length;
-    
-            // create a distribution that will consistently produce integers within inclusive range [0, 99].
-            var distribution = Random.integer(0, lengthArray -1);
-            // generate a number that is guaranteed to be within [0, 99] without any particular bias.
-            function generateNaturalLessThanX() {
-                return distribution(engine);
-            }
-    
             Random.shuffle(engine, topologyLightsCopy); 
     
             var slicedTopologyLightsCopy = topologyLightsCopy.slice(0, generateNaturalLessThanX());
     
             // console.log(slicedTopologyLightsCopy, slicedTopologyLightsCopy.length);
-    
+            
+            Random.shuffle(engine, extraLights);
+
+            extraLights.forEach(function(element) {
+                slicedTopologyLightsCopy.push(element);
+            });
+ 
+            Random.shuffle(engine, slicedTopologyLightsCopy); 
+
             modifyDimmer(slicedTopologyLightsCopy);
 
             if(slicedTopologyLightsCopy.length != 0) {
@@ -171,7 +196,7 @@ geoMapParser.doLoadFile(pathInputGeomap).then(function(result){
     var arrLight = geoMapParser.doSplitData(result);
     // console.log(arrLight);
 
-    var fDoAction = buildAction(arrLight);
+    var fDoAction = buildAction(arrLight, doExtraLights);
     fDoAction();
     timerDoWork = setInterval(fDoAction,  intervalSendingMsg * 1000);
 }, function(err) { 

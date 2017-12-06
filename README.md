@@ -30,6 +30,7 @@ Lamp 1 --> Nome lampada
 
 0 --> ???
 ```
+il formato dell'indirizzo MAC è `00158D000AAAA<num id, da 0 a max 150, con padding left A>` es: `00158D000AAAAA72`.
 
 ### CONFIGURAZIONE
 
@@ -65,6 +66,8 @@ Lo stesso stato è pubblicato tramite messaggi MQTT:
 
 con tag `#.#` e `#!#` di apertura e chiusura dei valori e `PW1....` valore del dimmer; i signoli campi sono separati da `;`.
 
+Tramite il parametro `DO_EXTRA_LIGHTS` è possibile generare traffico random amche di luci con indirizzo MAC non tra quelli del file Geomap. Il formato degli indirizzi MAC di queste luci è `MAC11900Z000BBBB<num id, da 300 a max 500>`.
+
 ### CONFIGURAZIONE
 
 Creare un file `.env` basandosi sul file `.env_template`
@@ -75,4 +78,5 @@ Creare un file `.env` basandosi sul file `.env_template`
 | `QUEUE_NAME` | nome della coda su cui sono pubblicati i messaggi | nessun default - parametro obbligatorio |
 | `PATH_INPUT_GEOMAP`      | path file descrizione lights | `./out/Geomap.txt` |
 | `PATH_OUTPUT_DUMP_LIGHTS`      | path di output file daum valori lights      |   `./out/dump_lights.json` |
-|`INTERVAL_SENDING_MSG` | numero di sec di intervallo tra nuovi messaggi | 6 |
+|`INTERVAL_SENDING_MSG` | numero di sec di intervallo tra nuovi messaggi | `6` |
+|`DO_EXTRA_LIGHTS` | genera lavori di luci oltre a quelle gestite con range id: 300 - 500. Valori validi: `ON`, `On`, `on`, `Off`, `OFF`, `off` | `ON` | 
