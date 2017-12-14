@@ -42,7 +42,7 @@ if(doExtraLightsValue == 'Off' || doExtraLightsValue == 'OFF'|| doExtraLightsVal
     doExtraLights = false;
 } 
 
-console.log("VALUE DO_EXTRA_LIGHTS:", (doExtraLights? 'ON', 'OFF'));
+console.log("VALUE DO_EXTRA_LIGHTS:", (doExtraLights? 'ON': 'OFF'));
 
 var client = mqtt.connect('mqtt://' + hostMqttServer);
 
