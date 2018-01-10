@@ -169,7 +169,7 @@ function buildAction(arrLights, doExtraLights) {
                 
                 
                         
-                client.publish(queueName, msg);
+                client.publish(queueName, msg, { qos: 2 });
                 
             }
             
@@ -198,6 +198,9 @@ geoMapParser.doLoadFile(pathInputGeomap).then(function(result){
 
     var fDoAction = buildAction(arrLight, doExtraLights);
     fDoAction();
+
+    // setInterval(()=> {  process.exit(0); }, 3000);
+   
     timerDoWork = setInterval(fDoAction,  intervalSendingMsg * 1000);
 }, function(err) { 
     console.error('ERROR:', err);
