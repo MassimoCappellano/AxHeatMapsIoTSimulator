@@ -4,6 +4,7 @@ const mqtt = require('mqtt');
 const fs = require('fs');
 const Random = require('random-js');
 const env = require('env2')('./.env');
+const moment = require('moment');
 
 const geoMapParser = require('./geomap_parser');
 const extraDataGenerator = require('./extra_data_generator');
@@ -155,7 +156,7 @@ function buildAction(arrLights, doExtraLights) {
             modifyDimmer(slicedTopologyLightsCopy);
 
             if(slicedTopologyLightsCopy.length != 0) {
-                console.log("---> SENDING NEW UPDATE MSG!!!");
+                console.log("---> SENDING NEW UPDATE MSG!!!", moment().format());
                 var newMsg = createMsgDimmer(slicedTopologyLightsCopy);
                 msg = newMsg;
                 
@@ -166,9 +167,7 @@ function buildAction(arrLights, doExtraLights) {
                     stream.write(JSON.stringify(topologyLights));
                     stream.end();
                 });
-                
-                
-                        
+                                       
                 client.publish(queueName, msg, { qos: 2 });
                 
             }
