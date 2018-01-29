@@ -80,7 +80,7 @@ function createMsgDimmer(lights) {
 
     var macAddress = light.macAddress; 
     var dimmer = light.dimmer;  
-    lMsg += `#.#NMEAS;MAC${macAddress};IDN56;FWV0036;HMS${dataRilevazione};DOY01;MTY2;PAR00158D00011B9CAE;LQI78;PKS0;PKR0;PKL0;VAC0;IAC0;PAT0;PRE0;CEA255;CER5;PW0900;PW1${dimmer};PW2900;TMP29;VCC3214;AD01;AD11;AD22;AD320;MOS4;#!#`;
+    lMsg += `#.#NMEAS;MAC${macAddress};IDN56;FWV0036;HMS290018${dataRilevazione};DOY01;MTY2;PAR00158D00011B9CAE;LQI78;PKS0;PKR0;PKL0;VAC0;IAC0;PAT0;PRE0;CEA255;CER5;PW0900;PW1${dimmer};PW2900;TMP29;VCC3214;AD01;AD11;AD22;AD320;MOS4;#!#`;
    }, this);
    
    return lMsg;
